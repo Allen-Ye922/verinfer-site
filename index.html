@@ -235,6 +235,48 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
 .mini-table td:first-child,.mini-table th:first-child{padding-left:0}
 .cap-note{font-size:14px;color:var(--muted);margin:14px 0 0}
 .cap-note strong{color:var(--ink)}
+/* dashboard walkthrough */
+.player{border:1px solid var(--line2);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:0 24px 60px -30px rgba(20,23,26,.35)}
+.pl-bar{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.pl-dots{display:flex;gap:6px;flex:none}
+.pl-dots i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.pl-url{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-url #plPath{color:var(--ink)}
+.pl-btn{flex:none;width:32px;height:28px;border-radius:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);cursor:pointer;font-size:11px}
+.pl-view{position:relative;overflow:hidden;aspect-ratio:1280/760;background:#f5f6f8;cursor:pointer}
+@media(max-width:600px){.pl-view{aspect-ratio:960/1100}}
+.pl-layer{position:absolute;left:0;top:0;width:1280px;transform-origin:0 0;transition:transform 1.1s cubic-bezier(.65,0,.35,1),opacity .25s ease}
+.pl-layer.jump{transition:none}
+.pl-layer.fade{opacity:0}
+.pl-layer img{display:none;width:1280px;max-width:none;height:auto}
+.pl-layer img.on{display:block}
+.pl-hl{position:absolute;border:3px solid #0f7a4a;border-radius:10px;box-shadow:0 0 0 9999px rgba(20,23,26,.16);opacity:0;pointer-events:none;transition:opacity .4s ease,left .6s ease,top .6s ease,width .6s ease,height .6s ease}
+.pl-hl.on{opacity:1}
+.pl-cursor{position:absolute;width:34px;height:34px;opacity:0;pointer-events:none;transition:left .9s cubic-bezier(.65,0,.35,1),top .9s cubic-bezier(.65,0,.35,1),opacity .3s ease}
+.pl-cursor.on{opacity:1}
+.pl-cursor.jump{transition:none}
+.pl-cursor svg{width:34px;height:34px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.pl-cursor::before{content:"";position:absolute;left:-22px;top:-22px;width:44px;height:44px;border-radius:50%;background:rgba(15,122,74,.35);transform:scale(0);opacity:0}
+.pl-cursor.click::before{animation:plclick .5s ease-out}
+@keyframes plclick{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.4);opacity:0}}
+.pl-foot{padding:14px 18px 0;border-top:1px solid var(--line)}
+.pl-chapters{display:flex;gap:6px;flex-wrap:wrap}
+.pl-chapters button{border:1px solid var(--line2);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans)}
+.pl-chapters button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pl-cap{margin:12px 0 14px;font-size:15px;color:var(--ink2);min-height:3.2em}
+.pl-prog{height:3px;background:var(--bg2);margin:0 -18px}
+.pl-prog i{display:block;height:100%;width:0;background:var(--green)}
+.dash-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+@media(max-width:900px){.dash-feats{grid-template-columns:1fr}}
+.ev .tag{font-family:var(--font-mono);font-size:11.5px;color:var(--green);margin-bottom:8px;display:block}
+.diag-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:960px){.diag-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.diag-grid{grid-template-columns:1fr}}
+.sim{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:16px;border-top:1px solid var(--line)}
+@media(max-width:760px){.sim{grid-template-columns:1fr}}
+.sim>div{padding:16px 18px 4px 0}
+.sim b{font-family:var(--font-disp);font-size:30px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1.1}
+.sim span{font-size:13.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -244,6 +286,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     <a class="logo" href="#top"><span class="logo-mark">V</span><span>Verinfer<small>Performance CI</small></span></a>
     <nav class="nav-links" aria-label="Main">
       <a href="#how">How it works</a>
+      <a href="#dashboard">Dashboard</a>
       <a href="#noise">Noise vs. regression</a>
       <a href="#quant">Quantization</a>
       <a href="#capacity">Capacity</a>
@@ -341,6 +384,45 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     </div>
   </section>
 
+  <!-- DASHBOARD -->
+  <section id="dashboard" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="k">Dashboard</div>
+        <h2>Every run lands in one place.</h2>
+        <p>CI posts each verdict to the hosted dashboard: history per baseline, drift over time, where a change landed, and what it costs. This walkthrough is the real dashboard loaded with the reports from our case studies; only the organization name is a placeholder.</p>
+      </div>
+      <div class="player reveal" id="player">
+        <div class="pl-bar">
+          <span class="pl-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div class="pl-url mono">dashboard.example.com<span id="plPath">/dashboard</span></div>
+          <button type="button" class="pl-btn" id="plToggle" aria-label="Pause walkthrough">❚❚</button>
+        </div>
+        <div class="pl-view" id="plView" role="img" aria-label="Screenshots of the Verinfer dashboard: baseline list, an FP8 run report, an inconclusive upgrade, run history, and team settings">
+          <div class="pl-layer" id="plLayer">
+            <img class="on" data-shot="list" src="img/dash-list.webp" width="1280" height="367" alt="">
+            <img data-shot="fp8" data-src="img/dash-fp8.webp" width="1280" height="3150" alt="">
+            <img data-shot="llama" data-src="img/dash-llama.webp" width="1280" height="1400" alt="">
+            <img data-shot="qwen" data-src="img/dash-qwen.webp" width="1280" height="1710" alt="">
+            <img data-shot="settings" data-src="img/dash-settings.webp" width="1280" height="1700" alt="">
+            <div class="pl-hl" id="plHl"></div>
+            <div class="pl-cursor" id="plCursor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2l15 10.5-6.6 1.2 3.9 7.4-2.9 1.5-3.9-7.5L4 20z" fill="#14171a" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+        <div class="pl-foot">
+          <div class="pl-chapters" id="plChapters"></div>
+          <p class="pl-cap" id="plCap">Every baseline at a glance: the latest verdict, quality pass rate, and GPU cost per 1M tokens with its change.</p>
+          <div class="pl-prog"><i id="plProg"></i></div>
+        </div>
+      </div>
+      <div class="dash-feats reveal">
+        <div class="ev"><span class="tag">Slack</span><h3>Alerts on drift, not only on failures</h3><p>A regression posts to Slack with the metrics, the pattern, and the cost. So does slow drift that no single run fails: output match falling three runs in a row, prompts turning unstable, or self-consistency down 5 points.</p></div>
+        <div class="ev"><span class="tag">Teams</span><h3>Invite-only organizations</h3><p>Viewer, member, and admin roles; CI API tokens per organization; OpenID Connect single sign-on, with an option to require it for every member.</p></div>
+        <div class="ev"><span class="tag">Self-hosted</span><h3>Runs where your data is</h3><p>A small FastAPI and PostgreSQL service you deploy with Docker Compose. Reporting is best-effort: an unreachable dashboard never changes a CI result.</p></div>
+      </div>
+    </div>
+  </section>
+
   <!-- NOISE -->
   <section class="alt" id="noise">
     <div class="wrap">
@@ -377,6 +459,14 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
       </div>
 
       <div class="card reveal" style="padding:22px;margin-top:24px">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h3 style="margin:0;font-family:var(--font-disp);font-size:17px">What the noise defenses buy, and what they cost</h3><span class="mono" style="font-size:12px;color:var(--muted)">simulation · 8% run-to-run drift · 1,000 trials per cell</span></div>
+        <div class="sim">
+          <div><b style="color:var(--red)">20.4%</b><span>of unchanged builds fail with a single run and a fixed 10% threshold.</span></div>
+          <div><b style="color:var(--green)">2.7%</b><span>fail with three repeats, the measured noise floor, and the rank test (the defaults).</span></div>
+          <div><b>54%</b><span>of true +20% slowdowns are still caught, down from 75%. On a runner this noisy, that is the price of not crying wolf; a quieter runner or more repeats buys it back.</span></div>
+        </div>
+      </div>
+      <div class="card reveal" style="padding:22px;margin-top:24px">
         <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h3 style="margin:0;font-family:var(--font-disp);font-size:17px">A false alarm, caught and explained <span class="real-tag">real run</span></h3><span class="mono" style="font-size:12px;color:var(--muted)">vLLM 0.27.1 → 0.31.0 · Llama-3.1-8B · H100</span></div>
         <p style="color:var(--muted);font-size:14.5px;margin:10px 0 0">The first comparison said <b style="color:var(--red)">regressed</b>: TTFT +14%, past the noise-adjusted threshold and significant. Restarting the new version twice more erased it (+0.6%, held). Repeats inside one server start share that start’s state, and the first run after a start is slower. Both are now built into the gate: <span class="mono">--min-server-starts 2</span> and <span class="mono">--discard-first-repeat</span>.</p>
       </div>
@@ -397,6 +487,25 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
       <div class="card reveal" style="padding:20px 22px;margin-top:16px">
         <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h3 style="margin:0;font-family:var(--font-disp);font-size:16px"><span class="mono" style="color:var(--green)">version_bisect</span> — find the release that introduced it <span class="real-tag">real run</span></h3><span class="mono" style="font-size:12px;color:var(--muted)">Qwen2.5-7B · H100 · TTFT vs. 0.27.1</span></div>
         <div class="bisect" aria-label="Bisection result"><span class="ok">0.27.1 baseline</span><span class="ok">0.28.0 −4.8%</span><span class="ok">0.29.0 −5.3%</span><span class="ok">0.30.0 +0.7%</span><span class="hit">0.31.0 +6.9% ✕</span><span style="border:none;background:none;color:var(--muted)">→ the TTFT step is between 0.30.0 and 0.31.0, and held on all five 0.31.0 server starts</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGNOSIS -->
+  <section id="diagnose">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="k">When it is real</div>
+        <h2>A verdict that says where to look.</h2>
+        <p>“TTFT +7%” leaves the investigation to you. Every report narrows it down, and states what it cannot establish: none of these sections names a cause it has not tested.</p>
+      </div>
+      <div class="diag-grid reveal">
+        <div class="ev"><span class="tag">segments</span><h3>Where the change landed</h3><p>Per-request samples split by prompt length, category, and prompt, each with its own rank test, and the pattern named by rule: broad, concentrated, or mixed. On the H100 upgrade, the TTFT rise hit 40-token and 770-token prompts alike, which ruled out a “long prompts got slower” story.</p></div>
+        <div class="ev"><span class="tag">latency_breakdown</span><h3>Which phase moved</h3><p>The latency change split into waiting for the first token, decoding, and what follows the last token. FP8’s 36.4 ms drop on Qwen2.5-7B: 29.7 ms decode, 3.8 ms first token.</p></div>
+        <div class="ev"><span class="tag">engine_config</span><h3>Which defaults differ</h3><p>The engine’s resolved configuration and startup facts (attention backend, KV-cache size, chunked-prefill budget) diffed between the two runs. Listed as candidates to test, never as causes.</p></div>
+        <div class="ev"><span class="tag">traffic_weighted_impact</span><h3>What it costs for your traffic</h3><p>Give the share of your requests in each prompt-length range and your monthly GPU spend; per-range changes are re-weighted to your mix. With less than half of your traffic covered by the benchmark, no estimate is given.</p></div>
+        <div class="ev"><span class="tag">hardware health</span><h3>Was the GPU healthy?</h3><p>The GPU is sampled before and during each run. If it was already busy, or throttled for a sustained part of the run, a slowdown is reported inconclusive with the reason. Quality regressions are never downgraded.</p></div>
+        <div class="ev"><span class="tag">comparability</span><h3>Is it even comparable?</h3><p>GPU, model, streaming, temperature, max tokens, and prompt count are checked on both sides. Differences are flagged, and <span class="mono">--strict-comparability</span> refuses to give a verdict that would prove nothing.</p></div>
       </div>
     </div>
   </section>
@@ -700,6 +809,125 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     document.body.appendChild(a); a.click(); a.remove();
     document.getElementById('formNote').textContent = 'Your email app should open with the draft addressed to hello@verinfer.com.';
   });
+
+  // Dashboard walkthrough. Coordinates are in screenshot pixels (1280 wide).
+  (function(){
+    var player = document.getElementById('player');
+    if (!player) return;
+    var view = document.getElementById('plView'), layer = document.getElementById('plLayer');
+    var hl = document.getElementById('plHl'), cursor = document.getElementById('plCursor');
+    var cap = document.getElementById('plCap'), path = document.getElementById('plPath');
+    var prog = document.getElementById('plProg'), toggle = document.getElementById('plToggle');
+    var chapWrap = document.getElementById('plChapters');
+    var shots = {};
+    layer.querySelectorAll('img').forEach(function(img){ shots[img.dataset.shot] = img; });
+    var CH = ['Overview', 'FP8 vs. bf16', 'False alarm', 'History', 'Team'];
+    var S = [
+      {c:0, shot:'list', p:'/dashboard', hl:[180,147,920,178], d:5000, t:'Every baseline at a glance: the latest verdict, quality pass rate, and GPU cost per 1M tokens with its change.'},
+      {c:0, shot:'list', p:'/dashboard', hl:[180,232,920,46], cur:[262,256], d:4200, t:'The FP8 run is 19% cheaper per token, and it still failed. Open it.'},
+      {c:1, shot:'fp8', p:'/dashboard/qwen7b_fp8_h100', hl:[180,522,920,48], d:7000, t:'Qwen2.5-7B on an H100, FP8 against bf16: decode 24% faster, cost per 1M tokens down 19%. Quality fell 1.5 points, and the default gate tolerates none, so CI fails.'},
+      {c:1, shot:'fp8', hl:[200,660,880,76], d:6500, t:'Output drift: five prompts that gave one answer under bf16 now flip between answers. Only prompts that are stable on both sides can count as drift.'},
+      {c:1, shot:'fp8', hl:[180,1405,920,325], d:6500, t:'Which phase moved: 29.7 ms of the 36.4 ms latency drop is decoding, not the first token. Above it, every prompt length moved the same way.'},
+      {c:1, shot:'fp8', hl:[180,1755,920,350], d:6500, t:'Token drift: 292 of 300 prompts produced the same tokens. Quality per prompt went from 93.3% to 92.3%, with Wilson intervals and p = 0.25 beside it.'},
+      {c:1, shot:'fp8', hl:[180,2130,920,620], d:6500, t:'Load curve: the same capacity under a 200 ms TTFT and 15 ms TPOT SLO, 35% more goodput, and self-consistency at every load level.'},
+      {c:1, shot:'fp8', hl:[180,2765,920,375], d:6000, t:'Engine settings that differ between the two runs, such as the KV-cache size, are listed as candidates to test, not as causes.'},
+      {c:2, shot:'llama', p:'/dashboard/llama8b_vllm_h100', hl:[180,522,920,48], d:7500, t:'Llama-3.1-8B after a vLLM upgrade: TTFT +10%, measured on a single server start. That is reported inconclusive, a warning instead of a red build. On fresh starts it did not reproduce.'},
+      {c:3, shot:'qwen', p:'/dashboard/qwen7b_vllm_h100', hl:[180,485,920,270], d:7500, t:'One row per run: four vLLM releases against a 0.27.1 baseline. By 0.31.0, TTFT is up 7.6%, under this baseline’s 10% threshold, so the gate held. The trend is how a slow creep shows up.'},
+      {c:3, shot:'qwen', hl:[180,757,920,350], d:6500, t:'Output match and self-consistency per run. Slack is alerted when match falls three runs in a row, even if every run passed.'},
+      {c:4, shot:'settings', p:'/settings', hl:[180,180,920,505], d:6000, t:'Invite-only organizations: CI tokens for check_regression.py, and viewer, member, and admin roles.'},
+      {c:4, shot:'settings', hl:[180,704,920,670], d:6000, t:'Slack alerts and OpenID Connect single sign-on, with an option to require SSO for every member.'}
+    ];
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var i = 0, shot = 'list', playing = !reduce, inView = false, timer = null, subTimers = [], loaded = false;
+
+    CH.forEach(function(name, c){
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = name;
+      b.addEventListener('click', function(){ for (var k = 0; k < S.length; k++) if (S[k].c === c) { go(k); break; } });
+      chapWrap.appendChild(b);
+    });
+
+    function loadAll(){
+      if (loaded) return; loaded = true;
+      Object.keys(shots).forEach(function(k){ var img = shots[k]; if (img.dataset.src) img.src = img.dataset.src; });
+    }
+    function geom(){
+      var narrow = view.clientWidth < 600, cropL = narrow ? 160 : 0, cropW = narrow ? 960 : 1280;
+      var s = view.clientWidth / cropW;
+      return {s:s, cropL:cropL, vh:view.clientHeight / s};
+    }
+    function place(step, instant){
+      var g = geom(), img = shots[step.shot], h = +img.getAttribute('height');
+      var y = Math.max(0, Math.min(step.hl[1] - 70, h - g.vh));
+      if (instant) layer.classList.add('jump');
+      layer.style.transform = 'translate(' + (-g.cropL * g.s) + 'px,' + (-y * g.s) + 'px) scale(' + g.s + ')';
+      if (instant) { void layer.offsetWidth; layer.classList.remove('jump'); }
+      hl.style.left = step.hl[0] + 'px'; hl.style.top = step.hl[1] + 'px';
+      hl.style.width = step.hl[2] + 'px'; hl.style.height = step.hl[3] + 'px';
+    }
+    function clearTimers(){ clearTimeout(timer); subTimers.forEach(clearTimeout); subTimers = []; }
+    function later(fn, ms){ subTimers.push(setTimeout(fn, ms)); }
+    function progress(ms){
+      prog.style.transition = 'none'; prog.style.width = '0';
+      void prog.offsetWidth;
+      if (ms) { prog.style.transition = 'width ' + ms + 'ms linear'; prog.style.width = '100%'; }
+    }
+    function show(step){
+      var p = step.p; if (!p) for (var k = S.indexOf(step); k >= 0 && !p; k--) p = S[k].p;
+      path.textContent = p;
+      cap.textContent = step.t;
+      chapWrap.querySelectorAll('button').forEach(function(b, c){ b.setAttribute('aria-current', c === step.c ? 'true' : 'false'); });
+      cursor.classList.remove('on', 'click');
+      if (step.shot !== shot) {
+        layer.classList.add('fade'); hl.classList.remove('on');
+        later(function(){
+          shots[shot].classList.remove('on'); shot = step.shot; shots[shot].classList.add('on');
+          place(step, true); layer.classList.remove('fade');
+          later(function(){ hl.classList.add('on'); }, 300);
+        }, 260);
+      } else {
+        place(step, false); hl.classList.add('on');
+      }
+      if (step.cur) {
+        cursor.classList.add('jump');
+        cursor.style.left = (step.cur[0] + 320) + 'px'; cursor.style.top = (step.cur[1] + 90) + 'px';
+        later(function(){ cursor.classList.remove('jump'); void cursor.offsetWidth; cursor.classList.add('on'); cursor.style.left = step.cur[0] + 'px'; cursor.style.top = step.cur[1] + 'px'; }, 120);
+        later(function(){ cursor.classList.add('click'); }, 1400);
+      }
+    }
+    function go(k){
+      clearTimers();
+      i = (k + S.length) % S.length;
+      show(S[i]);
+      schedule();
+    }
+    function schedule(){
+      clearTimeout(timer);
+      if (playing && inView && !document.hidden) { progress(S[i].d); timer = setTimeout(function(){ go(i + 1); }, S[i].d); }
+      else progress(0);
+    }
+    function setPlaying(on){
+      playing = on;
+      toggle.textContent = on ? '❚❚' : '▶';
+      toggle.setAttribute('aria-label', on ? 'Pause walkthrough' : 'Play walkthrough');
+      schedule();
+    }
+    toggle.addEventListener('click', function(){ setPlaying(!playing); });
+    view.addEventListener('click', function(){ if (playing) setPlaying(false); else go(i + 1); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting) loadAll();
+          inView = en.intersectionRatio >= 0.35; schedule();
+        });
+      }, {threshold:[0, 0.35], rootMargin:'300px 0px'}).observe(view);
+    } else { loadAll(); inView = true; }
+    document.addEventListener('visibilitychange', schedule);
+    if ('ResizeObserver' in window) new ResizeObserver(function(){ place(S[i], true); }).observe(view);
+    place(S[0], true);
+    show(S[0]);
+    setPlaying(playing);
+  })();
 
   // Reveal on scroll
   var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
