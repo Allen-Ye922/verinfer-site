@@ -401,10 +401,10 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
         <div class="pl-view" id="plView" role="img" aria-label="Screenshots of the Verinfer dashboard: baseline list, an FP8 run report, an inconclusive upgrade, run history, and team settings">
           <div class="pl-layer" id="plLayer">
             <img class="on" data-shot="list" src="img/dash-list.webp" width="1280" height="367" alt="">
-            <img data-shot="fp8" data-src="img/dash-fp8.webp" width="1280" height="3150" alt="">
-            <img data-shot="llama" data-src="img/dash-llama.webp" width="1280" height="1400" alt="">
-            <img data-shot="qwen" data-src="img/dash-qwen.webp" width="1280" height="1710" alt="">
-            <img data-shot="settings" data-src="img/dash-settings.webp" width="1280" height="1700" alt="">
+            <img data-shot="fp8" data-src="img/dash-fp8.webp" width="1280" height="3775" alt="">
+            <img data-shot="llama" data-src="img/dash-llama.webp" width="1280" height="1803" alt="">
+            <img data-shot="qwen" data-src="img/dash-qwen.webp" width="1280" height="2111" alt="">
+            <img data-shot="settings" data-src="img/dash-settings.webp" width="1280" height="1695" alt="">
             <div class="pl-hl" id="plHl"></div>
             <div class="pl-cursor" id="plCursor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2l15 10.5-6.6 1.2 3.9 7.4-2.9 1.5-3.9-7.5L4 20z" fill="#14171a" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
           </div>
@@ -825,15 +825,17 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     var S = [
       {c:0, shot:'list', p:'/dashboard', hl:[180,147,920,178], d:5000, t:'Every baseline at a glance: the latest verdict, quality pass rate, and GPU cost per 1M tokens with its change.'},
       {c:0, shot:'list', p:'/dashboard', hl:[180,232,920,46], cur:[262,256], d:4200, t:'The FP8 run is 19% cheaper per token, and it still failed. Open it.'},
-      {c:1, shot:'fp8', p:'/dashboard/qwen7b_fp8_h100', hl:[180,522,920,48], d:7000, t:'Qwen2.5-7B on an H100, FP8 against bf16: decode 24% faster, cost per 1M tokens down 19%. Quality fell 1.5 points, and the default gate tolerates none, so CI fails.'},
-      {c:1, shot:'fp8', hl:[200,660,880,76], d:6500, t:'Output drift: five prompts that gave one answer under bf16 now flip between answers. Only prompts that are stable on both sides can count as drift.'},
-      {c:1, shot:'fp8', hl:[180,1405,920,325], d:6500, t:'Which phase moved: 29.7 ms of the 36.4 ms latency drop is decoding, not the first token. Above it, every prompt length moved the same way.'},
-      {c:1, shot:'fp8', hl:[180,1755,920,350], d:6500, t:'Token drift: 292 of 300 prompts produced the same tokens. Quality per prompt went from 93.3% to 92.3%, with Wilson intervals and p = 0.25 beside it.'},
-      {c:1, shot:'fp8', hl:[180,2130,920,620], d:6500, t:'Load curve: the same capacity under a 200 ms TTFT and 15 ms TPOT SLO, 35% more goodput, and self-consistency at every load level.'},
-      {c:1, shot:'fp8', hl:[180,2765,920,375], d:6000, t:'Engine settings that differ between the two runs, such as the KV-cache size, are listed as candidates to test, not as causes.'},
-      {c:2, shot:'llama', p:'/dashboard/llama8b_vllm_h100', hl:[180,522,920,48], d:7500, t:'Llama-3.1-8B after a vLLM upgrade: TTFT +10%, measured on a single server start. That is reported inconclusive, a warning instead of a red build. On fresh starts it did not reproduce.'},
-      {c:3, shot:'qwen', p:'/dashboard/qwen7b_vllm_h100', hl:[180,485,920,270], d:7500, t:'One row per run: four vLLM releases against a 0.27.1 baseline. By 0.31.0, TTFT is up 7.6%, under this baseline’s 10% threshold, so the gate held. The trend is how a slow creep shows up.'},
-      {c:3, shot:'qwen', hl:[180,757,920,350], d:6500, t:'Output match and self-consistency per run. Slack is alerted when match falls three runs in a row, even if every run passed.'},
+      {c:1, shot:'fp8', p:'/dashboard/qwen7b_fp8_h100', hl:[180,160,920,218], d:7000, t:'One chart per metric, each on its own scale, with the baseline dashed. Qwen2.5-7B on an H100, FP8 against bf16: time per output token down 24%, time to first token within noise.'},
+      {c:1, shot:'fp8', hl:[180,818,297,214], d:6500, t:'Quality pass rate fell 1.5 points. The default gate tolerates no quality drop, so the run fails, even with decoding 24% faster and cost per 1M tokens down 19%.'},
+      {c:1, shot:'fp8', hl:[200,1260,880,68], d:6500, t:'Output drift: five prompts that gave one answer under bf16 now flip between answers. Only prompts that are stable on both sides can count as drift.'},
+      {c:1, shot:'fp8', hl:[180,2002,920,327], d:6500, t:'Which phase moved: 29.7 ms of the 36.4 ms latency drop is decoding, not the first token. Above it, every prompt length moved the same way.'},
+      {c:1, shot:'fp8', hl:[180,2352,920,362], d:6500, t:'Token drift: 292 of 300 prompts produced the same tokens. Quality per prompt went from 93.3% to 92.3%, with Wilson intervals and p = 0.25 beside it.'},
+      {c:1, shot:'fp8', hl:[180,2727,920,621], d:6500, t:'Load curve: the same capacity under a 200 ms TTFT and 15 ms TPOT SLO, 35% more goodput, and self-consistency at every load level.'},
+      {c:1, shot:'fp8', hl:[180,3362,920,375], d:6000, t:'Engine settings that differ between the two runs, such as the KV-cache size, are listed as candidates to test, not as causes.'},
+      {c:2, shot:'llama', p:'/dashboard/llama8b_vllm_h100', hl:[180,160,297,218], d:6000, t:'Llama-3.1-8B after a vLLM upgrade: time to first token up 11%, but measured on a single server start.'},
+      {c:2, shot:'llama', hl:[180,898,920,48], d:6500, t:'So the run is reported inconclusive: a warning instead of a red build. On fresh server starts, the slowdown did not reproduce.'},
+      {c:3, shot:'qwen', p:'/dashboard/qwen7b_vllm_h100', hl:[180,160,920,655], d:7500, t:'Four vLLM releases against a 0.27.1 baseline. By 0.31.0, time to first token is up about 7%, under this baseline’s 10% threshold, so every run held. The trend is how a slow creep shows up.'},
+      {c:3, shot:'qwen', hl:[180,1134,920,346], d:6500, t:'Output match and self-consistency per run. Slack is alerted when match falls three runs in a row, even if every run passed.'},
       {c:4, shot:'settings', p:'/settings', hl:[180,180,920,505], d:6000, t:'Invite-only organizations: CI tokens for check_regression.py, and viewer, member, and admin roles.'},
       {c:4, shot:'settings', hl:[180,704,920,670], d:6000, t:'Slack alerts and OpenID Connect single sign-on, with an option to require SSO for every member.'}
     ];
