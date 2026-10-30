@@ -303,6 +303,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
 .sim b{font-family:var(--font-disp);font-size:30px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1.1}
 .sim span{font-size:13.5px;color:var(--muted)}
 </style>
+<script defer src="https://stats.verinfer.com/script.js" data-website-id="0c4f3197-0a24-42c9-b0cf-926630f5b658" data-domains="verinfer.com"></script>
 </head>
 <body>
 
@@ -317,7 +318,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
       <a href="#capacity">Capacity</a>
       <a href="#evidence">Evidence</a>
       <a href="/blog/">Blog</a>
-      <a class="btn btn-dark btn-sm" href="#contact">Request access</a>
+      <a class="btn btn-dark btn-sm" href="#contact" data-umami-event="request-access" data-umami-event-from="nav">Request access</a>
     </nav>
   </div>
 </header>
@@ -332,8 +333,8 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
         <h1>Know before you ship: did this upgrade make inference <em>slower, costlier, or worse?</em></h1>
         <p class="lede">Your test suite guards <strong>correctness</strong>. Verinfer guards <strong>latency, throughput, output quality, and cost</strong>. It benchmarks the real inference service you ship, compares it with the baseline committed in your repo, and fails the build when something actually got worse — not when the GPU had a noisy minute.</p>
         <div class="hero-ctas">
-          <a class="btn btn-dark" href="#contact">Request access →</a>
-          <a class="btn btn-ghost" href="https://dashboard.verinfer.com/demo">Explore the live demo ↗</a>
+          <a class="btn btn-dark" href="#contact" data-umami-event="request-access" data-umami-event-from="hero">Request access →</a>
+          <a class="btn btn-ghost" href="https://dashboard.verinfer.com/demo" data-umami-event="open-demo" data-umami-event-from="hero">Explore the live demo ↗</a>
           <a class="btn btn-ghost" href="#quant">See the FP8 findings</a>
         </div>
         <div class="hero-meta">
@@ -428,7 +429,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
       <div class="sec-head reveal">
         <div class="k">Dashboard</div>
         <h2>Every run lands in one place.</h2>
-        <p>CI posts each verdict to the hosted dashboard: history per baseline, drift over time, where a change landed, and what it costs. This walkthrough is the real dashboard loaded with the reports from our case studies; only the organization name is a placeholder. <a href="https://dashboard.verinfer.com/demo">Open the live demo</a> to click through it yourself, no account needed.</p>
+        <p>CI posts each verdict to the hosted dashboard: history per baseline, drift over time, where a change landed, and what it costs. This walkthrough is the real dashboard loaded with the reports from our case studies; only the organization name is a placeholder. <a href="https://dashboard.verinfer.com/demo" data-umami-event="open-demo" data-umami-event-from="dashboard-section">Open the live demo</a> to click through it yourself, no account needed.</p>
       </div>
       <div class="player reveal" id="player">
         <div class="pl-bar">
@@ -591,7 +592,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
           </div>
         </div>
       </div>
-      <p class="mono reveal" style="font-size:12px;color:#7f95a8;margin-top:26px">Case-study figures from Verinfer’s own runs on Modal H100s, with vLLM 0.31.0. Your numbers will differ by model and hardware — that’s the point of measuring them in CI. <a href="/blog/fp8-high-concurrency/" style="color:#3ec483">Read the full write-up →</a></p>
+      <p class="mono reveal" style="font-size:12px;color:#7f95a8;margin-top:26px">Case-study figures from Verinfer’s own runs on Modal H100s, with vLLM 0.31.0. Your numbers will differ by model and hardware — that’s the point of measuring them in CI. <a href="/blog/fp8-high-concurrency/" data-umami-event="read-post" data-umami-event-from="quant-section" style="color:#3ec483">Read the full write-up →</a></p>
     </div>
   </section>
 
@@ -846,6 +847,8 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     var a = document.createElement('a');
     a.href = 'mailto:hello@verinfer.com?subject=' + subject + '&body=' + body;
     document.body.appendChild(a); a.click(); a.remove();
+    // Records only that a draft was opened and for which engine, never what was typed.
+    if (window.umami) umami.track('compose-email', {engine: engine});
     document.getElementById('formNote').textContent = 'Your email app should open with the draft addressed to hello@verinfer.com.';
   });
 
