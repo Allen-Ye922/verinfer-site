@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>FP8 Cut Our TPOT by 25%. At High Concurrency, It Also Changed the Answers. — Verinfer</title>
+<meta name="description" content="We benchmarked FP8 on a real vLLM service under concurrency. Decoding got 23–26% faster per token; at 64 concurrent requests, self-consistency fell from 97.6% to 75%.">
+<link rel="canonical" href="https://verinfer.com/blog/fp8-high-concurrency">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FP8 Cut Our TPOT by 25%. At High Concurrency, It Also Changed the Answers.">
+<meta property="og:description" content="Decoding got 23–26% faster per token. At 64 concurrent requests, self-consistency fell from 97.6% to 75%.">
+<meta property="og:url" content="https://verinfer.com/blog/fp8-high-concurrency">
+<meta property="og:site_name" content="Verinfer">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"FP8 Cut Our TPOT by 25%. At High Concurrency, It Also Changed the Answers.","datePublished":"2026-10-30","author":{"@type":"Organization","name":"Verinfer"},"publisher":{"@type":"Organization","name":"Verinfer","url":"https://verinfer.com"},"mainEntityOfPage":"https://verinfer.com/blog/fp8-high-concurrency"}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f1; --surface:#ffffff;
+  --ink:#14171a; --ink2:#2a2f35; --muted:#5f6872; --faint:#8a939c;
+  --line:#ddd9cf; --line2:#cbc6b8;
+  --green:#0f7a4a; --green-bg:#e6f3eb; --red:#c2411e;
+  --font-sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --font-disp:"Archivo",var(--font-sans);
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0d1013; --surface:#161b1f;
+    --ink:#eef1f3; --ink2:#d8dee3; --muted:#9ba6af; --faint:#6d7983;
+    --line:#263038; --line2:#33414c;
+    --green:#3ec483; --green-bg:#123626; --red:#ff7a52;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-disp);font-weight:800;letter-spacing:-.02em;font-size:20px}
+.logo-mark{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--font-mono);font-weight:600;font-size:15px;flex:none}
+.logo small{font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;line-height:1;margin-top:1px}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+@media(max-width:820px){.nav-links a{display:none}.nav-links a.btn{display:inline-flex}}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--ink);transition:transform .15s ease, background .15s ease}
+.btn-dark{background:var(--ink);color:var(--bg)}
+.btn-dark:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--surface)}
+.btn-sm{padding:8px 14px;font-size:13px}
+article{max-width:720px;margin:0 auto;padding:56px 0 24px}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:600;margin:0}
+.eyebrow a{text-decoration:none}
+h1{font-family:var(--font-disp);font-size:clamp(30px,4.4vw,46px);line-height:1.08;letter-spacing:-.025em;margin:12px 0 16px;font-weight:800}
+.byline{font-family:var(--font-mono);font-size:13px;color:var(--muted);margin:0 0 36px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+h2{font-family:var(--font-disp);font-size:24px;line-height:1.2;letter-spacing:-.015em;margin:44px 0 10px;font-weight:800}
+p{margin:0 0 18px;color:var(--ink2)}
+.lead{font-size:19px;color:var(--ink)}
+strong{color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:28px 0 30px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.stats div{padding:18px 20px;border-right:1px solid var(--line)}
+.stats div:last-child{border-right:none}
+.stats b{font-family:var(--font-disp);font-size:28px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1.1}
+.stats span{font-size:13.5px;color:var(--muted);line-height:1.45;display:block;margin-top:6px}
+@media(max-width:640px){.stats{grid-template-columns:1fr}.stats div{border-right:none;border-bottom:1px solid var(--line)}.stats div:last-child{border-bottom:none}}
+.table-wrap{overflow-x:auto;margin:6px 0 22px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);text-align:left;font-weight:500;padding:8px 12px 8px 0;border-bottom:1px solid var(--line2)}
+td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);color:var(--ink2);white-space:nowrap}
+td.num{font-family:var(--font-mono)}
+.note{font-size:14px;color:var(--muted)}
+.cta{margin:48px 0 0;padding:28px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.cta h2{margin-top:0}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:64px;font-size:14px;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="logo-mark">V</span><span>Verinfer<small>Performance CI</small></span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/#how">How it works</a>
+      <a href="/#quant">Quantization</a>
+      <a href="/blog/">Blog</a>
+      <a class="btn btn-dark btn-sm" href="/#contact">Request access</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <article>
+    <p class="eyebrow"><a href="/blog/">Blog</a> · Quantization</p>
+    <h1>FP8 Cut Our TPOT by 25%. At High Concurrency, It Also Changed the Answers.</h1>
+    <p class="byline">Verinfer · October 30, 2026</p>
+
+    <p class="lead">Quantization is usually sold as a free lunch: same quality, less memory, faster decoding. We wanted to check that claim before recommending FP8 anywhere, so we benchmarked it the way it actually ships — the real service, under real concurrency — instead of a single offline pass.</p>
+
+    <h2>Setup</h2>
+    <p>We served Qwen2.5-7B-Instruct on an H100 with vLLM 0.31.0, comparing bf16 against online FP8, a calibrated FP8 checkpoint, and AWQ across a concurrency sweep. Every comparison went through the same gates we use for engine upgrades: latency split into TTFT vs. TPOT, output-quality checks with significance testing, and cost converted to dollars per 1M tokens.</p>
+
+    <h2>What we found</h2>
+    <p>FP8 did what it promises on latency: TPOT dropped 23–26%.</p>
+
+    <div class="stats">
+      <div><b>−23 to −26%</b><span>time per output token, FP8 vs. bf16</span></div>
+      <div><b>97.6% → 75%</b><span>self-consistency at 64 concurrent requests, bf16 vs. FP8</span></div>
+      <div><b>65 / 70</b><span>FP8 outputs that changed with batch size, vs. 35 / 70 for bf16</span></div>
+    </div>
+
+    <p>What it also did was less comfortable. At 64 concurrent requests, self-consistency — how often the service gives the same answer to the same prompt — fell from 97.6% under bf16 to about 75% under FP8.</p>
+    <p>To find out why, we ran the same prompts at batch sizes from 1 to 128. Rerunning an input at the same batch size gave identical output on both precisions, so the engine itself is deterministic. Changing the batch size is what changed the text: FP8's output changed in 65 of 70 cases, with the first differing token at a median of 19. bf16 changed too, in 35 of 70 cases, but much later, at a median of token 77. Some batch dependence is normal; FP8 nearly doubled it and moved it much earlier in the answer.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Batch-size probe</th><th>Same input, rerun</th><th>Different batch size</th><th>Median first differing token</th></tr></thead>
+        <tbody>
+          <tr><td>bf16</td><td class="num">identical</td><td class="num">35 / 70 changed</td><td class="num">77</td></tr>
+          <tr><td>FP8</td><td class="num">identical</td><td class="num">65 / 70 changed</td><td class="num">19</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>In other words, FP8 doesn't just make decoding faster. Under load, its answers depend on how busy the server is: cheaper per token, but measurably less consistent with itself.</p>
+
+    <h2>Why this matters</h2>
+    <p>If you only watch latency, FP8 looks like an obvious win. If you watch latency, quality, and cost together, it's a tradeoff with a real price tag: lower cost per 1M tokens, paid for in output stability. That's exactly the kind of tradeoff that should be decided with data, not with a benchmark table from a launch post.</p>
+
+    <h2>What this doesn't prove</h2>
+    <p>These numbers are from one model, our prompts, and our serving setup. Quantization behavior varies by model family, and some of our capacity numbers were measured only once. Where the tokens still matched, FP8's next-token distribution barely moved, and its quality drop on our prompt set was too small to be statistically significant. We publish the methodology and the limitations alongside the results because a benchmark you can't reproduce is marketing, not evidence.</p>
+
+    <h2>What we'd do instead</h2>
+    <p>Gate quantization changes the same way you'd gate an engine upgrade: run the real service against a committed baseline in CI, require statistical significance before calling anything a regression (noise gets marked inconclusive, not regressed), and check quality at the concurrency you actually serve — not at batch size 1.</p>
+
+    <div class="cta">
+      <h2>See it on your own model</h2>
+      <p>Browse the verdicts from these runs in the read-only demo, no account needed. Or run a pilot: we measure your next quantization or engine change on your own service and prompts.</p>
+      <div class="cta-row">
+        <a class="btn btn-dark" href="https://dashboard.verinfer.com/demo">Explore the live demo ↗</a>
+        <a class="btn btn-ghost" href="/#contact">Request a pilot →</a>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span><b style="color:var(--ink)">Verinfer</b> · Performance CI for LLM inference · <a href="mailto:hello@verinfer.com" style="color:var(--ink);font-weight:600">hello@verinfer.com</a></span>
+    <span>© 2026 Verinfer · Built in Austin, Texas</span>
+  </div>
+</footer>
+
+</body>
+</html>
