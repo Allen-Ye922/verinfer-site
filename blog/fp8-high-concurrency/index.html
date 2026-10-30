@@ -26,6 +26,7 @@
   --ink:#14171a; --ink2:#2a2f35; --muted:#5f6872; --faint:#8a939c;
   --line:#ddd9cf; --line2:#cbc6b8;
   --green:#0f7a4a; --green-bg:#e6f3eb; --red:#c2411e;
+  --cta:#0f7a4a; --cta-hover:#0a5c38; --cta-ink:#ffffff;
   --font-sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
   --font-disp:"Archivo",var(--font-sans);
   --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -36,6 +37,7 @@
     --ink:#eef1f3; --ink2:#d8dee3; --muted:#9ba6af; --faint:#6d7983;
     --line:#263038; --line2:#33414c;
     --green:#3ec483; --green-bg:#123626; --red:#ff7a52;
+    --cta:#3ec483; --cta-hover:#62d49b; --cta-ink:#0d1013;
   }
 }
 *{box-sizing:border-box}
@@ -48,12 +50,14 @@ header{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 
 .logo-mark{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--font-mono);font-weight:600;font-size:15px;flex:none}
 .logo small{font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;line-height:1;margin-top:1px}
 .nav-links{display:flex;gap:26px;align-items:center}
-.nav-links a{text-decoration:none;font-size:14px;font-weight:500;color:var(--muted)}
-.nav-links a:hover{color:var(--ink)}
+.nav-links a{text-decoration:none;font-size:14px;font-weight:500}
+.nav-links a:not(.btn){color:var(--muted)}
+.nav-links a:not(.btn):hover{color:var(--ink)}
 @media(max-width:820px){.nav-links a{display:none}.nav-links a.btn{display:inline-flex}}
 .btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--ink);transition:transform .15s ease, background .15s ease}
-.btn-dark{background:var(--ink);color:var(--bg)}
-.btn-dark:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--cta);color:var(--cta-ink);border-color:var(--cta)}
+.btn-primary:hover,.btn-primary:focus-visible{background:var(--cta-hover);border-color:var(--cta-hover);color:var(--cta-ink);transform:translateY(-1px)}
+.btn-primary:focus-visible{outline:2px solid var(--cta);outline-offset:2px}
 .btn-ghost{background:transparent;color:var(--ink)}
 .btn-ghost:hover{background:var(--surface)}
 .btn-sm{padding:8px 14px;font-size:13px}
@@ -109,7 +113,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:64px;font
       <a href="/#how">How it works</a>
       <a href="/#quant">Quantization</a>
       <a href="/blog/">Blog</a>
-      <a class="btn btn-dark btn-sm" href="/#contact" data-umami-event="request-access" data-umami-event-from="fp8-post-nav">Request access</a>
+      <a class="btn btn-primary btn-sm" href="/#contact" data-umami-event="request-access" data-umami-event-from="fp8-post-nav">Request access</a>
     </nav>
   </div>
 </header>
@@ -186,7 +190,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:64px;font
       <h2>See it on your own model</h2>
       <p>Browse the verdicts from these runs in the read-only demo, no account needed. Or run a pilot: we measure your next quantization or engine change on your own service and prompts.</p>
       <div class="cta-row">
-        <a class="btn btn-dark" href="https://dashboard.verinfer.com/demo" data-umami-event="open-demo" data-umami-event-from="fp8-post">Explore the live demo ↗</a>
+        <a class="btn btn-primary" href="https://dashboard.verinfer.com/demo" data-umami-event="open-demo" data-umami-event-from="fp8-post">Explore the live demo ↗</a>
         <a class="btn btn-ghost" href="/#contact" data-umami-event="request-pilot" data-umami-event-from="fp8-post">Request a pilot →</a>
       </div>
     </div>
