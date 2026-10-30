@@ -91,6 +91,29 @@ td.num,th.num{text-align:right;font-family:var(--font-mono);font-size:13px}
 .verdict-foot{padding:14px 18px;background:var(--surface2);border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
 .verdict-foot b{color:var(--ink)}
 /* strip */
+/* terminal-style verdict card */
+.verdict.term{background:var(--code);border-color:#26323d;box-shadow:0 18px 44px rgba(10,15,20,.28)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#161e26;border-bottom:1px solid #26323d}
+.term-bar i{width:11px;height:11px;border-radius:50%;display:block;background:#33414c}
+.term-bar i:nth-child(1){background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+.term-bar span{margin-left:10px;font-family:var(--font-mono);font-size:11.5px;color:#7f95a8}
+.verdict.term .verdict-head{border-bottom-color:#26323d}
+.verdict.term .verdict-head .t{color:#7f95a8}.verdict.term .verdict-head .t b{color:#d6e2ec}
+.verdict.term th{color:#6d7f90}
+.verdict.term td{color:#d6e2ec;border-top-color:#222d37}
+.verdict.term .delta-bad{color:#ff7a52}.verdict.term .delta-good{color:#3ec483}
+.verdict.term .badge-fail{background:#3a1d14;color:#ff7a52}
+.verdict.term .badge-pass{background:#123626;color:#7ed6a6}
+.verdict.term .verdict-foot{background:#0d1318;border-top-color:#26323d;color:#9db0c1}
+.verdict.term .verdict-foot b{color:#eef1f3}
+.glow{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff4d4d;margin-right:7px;box-shadow:0 0 0 3px rgba(255,77,77,.18),0 0 12px 2px rgba(255,77,77,.75);vertical-align:1px}
+/* engine band */
+.engines{margin-top:44px;text-align:center}
+.engines-label{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.engines-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.engine{border:1px solid var(--line2);background:var(--surface);border-radius:12px;padding:14px 28px;font-family:var(--font-disp);font-weight:700;font-size:24px;letter-spacing:-.01em;min-width:190px}
+.engine small{display:block;font-family:var(--font-mono);font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.02em;margin-top:2px}
+.foot-legal{width:100%;font-size:12.5px;color:var(--muted);font-family:var(--font-mono)}
 .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:44px;background:var(--surface)}
 .strip-in{display:flex;gap:28px;flex-wrap:wrap;justify-content:space-between;padding:16px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em}
 .strip-in b{color:var(--ink);font-weight:600}
@@ -306,6 +329,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
         <p class="lede">Your test suite guards <strong>correctness</strong>. Verinfer guards <strong>latency, throughput, output quality, and cost</strong>. It benchmarks the real inference service you ship, compares it with the baseline committed in your repo, and fails the build when something actually got worse — not when the GPU had a noisy minute.</p>
         <div class="hero-ctas">
           <a class="btn btn-dark" href="#contact">Request access →</a>
+          <a class="btn btn-ghost" href="https://dashboard.verinfer.com/demo">Explore the live demo ↗</a>
           <a class="btn btn-ghost" href="#quant">See the FP8 findings</a>
         </div>
         <div class="hero-meta">
@@ -315,10 +339,11 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
         </div>
       </div>
 
-      <div class="card verdict" aria-label="A real CI verdict">
+      <div class="card verdict term" aria-label="A real CI verdict">
+        <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>ci · regression-check</span></div>
         <div class="verdict-head">
           <div class="t"><b>check_regression.py</b> <span class="real-tag">real run</span><br>SGLang 0.5.19 · Qwen2.5-0.5B · one added flag: <span style="color:var(--ink)">--max-running-requests 1</span></div>
-          <span class="badge badge-fail">✕ Regressed</span>
+          <span class="badge badge-fail"><span class="glow"></span>✕ Regressed</span>
         </div>
         <table aria-label="Benchmark comparison">
           <thead><tr><th>Metric</th><th class="num opt">Baseline</th><th class="num">After</th><th class="num">Δ</th><th class="num">Verdict</th></tr></thead>
@@ -331,6 +356,15 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
           </tbody>
         </table>
         <div class="verdict-foot"><span aria-hidden="true">◈</span><span><b>CI failed.</b> A throughput or cost dashboard would have shown this change as a win. Every request now queues before its first token, so a user watching a streamed answer waits 4.7× longer for anything to appear.</span></div>
+      </div>
+    </div>
+
+    <div class="engines" aria-label="Supported inference engines">
+      <div class="engines-label">Guards the engines you deploy</div>
+      <div class="engines-row">
+        <div class="engine">vLLM<small>supported engine</small></div>
+        <div class="engine">SGLang<small>supported engine</small></div>
+        <div class="engine">TensorRT-LLM<small>supported engine</small></div>
       </div>
     </div>
 
@@ -390,7 +424,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
       <div class="sec-head reveal">
         <div class="k">Dashboard</div>
         <h2>Every run lands in one place.</h2>
-        <p>CI posts each verdict to the hosted dashboard: history per baseline, drift over time, where a change landed, and what it costs. This walkthrough is the real dashboard loaded with the reports from our case studies; only the organization name is a placeholder.</p>
+        <p>CI posts each verdict to the hosted dashboard: history per baseline, drift over time, where a change landed, and what it costs. This walkthrough is the real dashboard loaded with the reports from our case studies; only the organization name is a placeholder. <a href="https://dashboard.verinfer.com/demo">Open the live demo</a> to click through it yourself, no account needed.</p>
       </div>
       <div class="player reveal" id="player">
         <div class="pl-bar">
@@ -693,6 +727,7 @@ footer{padding:36px 0 44px;border-top:1px solid var(--line);margin-top:72px}
     <span><b style="color:var(--ink)">Verinfer</b> · Performance CI for LLM inference · Austin, Texas · <a href="mailto:hello@verinfer.com" style="color:var(--ink);font-weight:600">hello@verinfer.com</a></span>
     <span style="display:flex;gap:20px;flex-wrap:wrap"><a href="#how">How it works</a><a href="#quant">Quantization</a><a href="#capacity">Capacity</a><a href="#evidence">Evidence</a><a href="#contact">Contact</a></span>
     <span class="mono" style="font-size:12px">vLLM · SGLang · TensorRT-LLM</span>
+    <span class="foot-legal">© 2026 Verinfer · Built in Austin, Texas</span>
   </div>
 </footer>
 
